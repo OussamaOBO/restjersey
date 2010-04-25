@@ -7,6 +7,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -50,29 +51,36 @@ public class UserResource {
     @POST
     @Path("/addUser")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addUser(String json) {
-        User user = new Gson().fromJson(json, User.class);
+    public Response addUser(String userJSON) {
+        User user = new Gson().fromJson(userJSON, User.class);
         if (user.getLogin() == null || user.getPassword() == null || user.getLogin().equals("") || user.getPassword().equals("")) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
         UserDAO userDAO = new UserDAO();
+        if (userDAO.getUser(user.getLogin()) != null) {
+            return Response.status(Response.Status.CONFLICT).build();
+        }
         userDAO.add(user);
         return Response.status(Response.Status.CREATED).build();
     }
-   /*
+   
     @PUT
-    @Path("/updateUser/{login}")
-    public Response addUser(@BodyParam body, @PathParam("login") String login, @PathParam("password") String password) {
-        if (login == null || password == null || login.equals("") || password.equals("")) {
+    @Path("/updateUser")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateUser(String userJSON) {
+        User user = new Gson().fromJson(userJSON, User.class);
+        if (user.getLogin() == null || user.getPassword() == null || user.getLogin().equals("") || user.getPassword().equals("")) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        User user = new User();
-        user.setLogin(login);
-        user.setPassword(password);
-        userDAO.add(user);
-        return Response.status(Response.Status.CREATED).build();
+        UserDAO userDAO = new UserDAO();
+        if (userDAO.getUser(user.getLogin()) == null) {
+            return Response.status(Response.Status.CONFLICT).build();
+        }
+        System.out.println("Session state -> "+userDAO.getSession().isOpen());
+        userDAO.update(user);        
+        return Response.status(Response.Status.ACCEPTED).build();
     }
-*/
+
     @DELETE
     @Path("/deleteUser/{login}")
     public Response deleteUser(@PathParam("login") String login) {       
