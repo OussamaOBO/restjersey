@@ -17,6 +17,8 @@ public abstract class GenericDAO<T> extends DAOFactory {
         this.classe = classe;
     }
 
+    public abstract boolean exists(T t) throws Exception;
+
     public void add(T t) throws Exception {
         try {
             getSession().save(t);
@@ -74,6 +76,22 @@ public abstract class GenericDAO<T> extends DAOFactory {
         } finally {
             close();
         }
+    }
+
+    public void add(List<T> list) throws Exception {
+        try {
+            for (int i = 0; i < list.size(); i++) {
+                getSession().save(list.get(i));
+                beginTransaction();
+                commit();
+            }
+        } catch (Exception e) {
+            throw e;
+        }
+        finally {
+            close();
+        }
+
     }
 
     public void deleteAll() throws Exception {

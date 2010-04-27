@@ -13,6 +13,11 @@ public class UserDAO extends GenericDAO<User> {
         super(User.class);
     }
 
+    @Override
+    public boolean exists(User user) throws Exception {
+        return getUser(user.getLogin()) != null;
+    }
+
     public User getUser(String login, String password) throws Exception {
         try {
             String hql = "select u from User as u where u.login = :login and u.password = :password";
