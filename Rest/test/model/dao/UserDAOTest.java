@@ -34,7 +34,7 @@ public class UserDAOTest {
     }
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         userDAO.deleteAll();
 
         user1 = new User();
@@ -46,12 +46,12 @@ public class UserDAOTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws Exception {
         userDAO.deleteAll();
     }
 
     @Test
-    public void testAddUser() {       
+    public void testAddUser() throws Exception {
         System.out.println("testAddUser");
         userDAO.add(user1);     
         User result = userDAO.getUser(user1.getLogin());
@@ -61,7 +61,7 @@ public class UserDAOTest {
     }
 
     @Test
-    public void testDeleteUser() {
+    public void testDeleteUser() throws Exception {
         System.out.println("testDeleteUser");
         userDAO.add(user1);
         userDAO.delete(user1);
@@ -69,7 +69,7 @@ public class UserDAOTest {
     }
 
     @Test
-    public void testUpdateUserPassword() {
+    public void testUpdateUserPassword() throws Exception {
         System.out.println("testUpdateUserPassword");
         userDAO.add(user1);
         user1.setPassword("newPassword");
@@ -80,7 +80,7 @@ public class UserDAOTest {
     }
 
     @Test(expected = Exception.class)
-    public void testUpdateUserLogin() {
+    public void testUpdateUserLogin() throws Exception {
         System.out.println("testUpdateUserLogin");
         userDAO.add(user1);
         user1.setLogin("newLogin");
@@ -94,7 +94,7 @@ public class UserDAOTest {
      * Test of getUser method, of class UserDAO.
      */
     @Test
-    public void testGetUser_String_String() {
+    public void testGetUser_String_String() throws Exception {
         System.out.println("testGetUser_String_String");
         userDAO.add(user1);        
         User result = userDAO.getUser(user1.getLogin(), user1.getPassword());
@@ -106,7 +106,7 @@ public class UserDAOTest {
      * Test of getUser method, of class UserDAO.
      */
     @Test
-    public void testGetUser_String() {
+    public void testGetUser_String() throws Exception {
         System.out.println("testGetUser_String");
         userDAO.add(user1);       
         User result = userDAO.getUser(user1.getLogin());
@@ -115,7 +115,7 @@ public class UserDAOTest {
     }
     
     @Test
-    public void testListAllUsers() {
+    public void testListAllUsers() throws Exception {
         System.out.println("testListAllUsers");
         List<User> list = new ArrayList<User>();
         list.add(user1);
@@ -133,7 +133,7 @@ public class UserDAOTest {
     }
 
     @Test
-    public void testDeleteAllUsers() {
+    public void testDeleteAllUsers() throws Exception {
         System.out.println("testDeleteAllUsers");
 
         userDAO.add(user1);
