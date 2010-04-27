@@ -25,7 +25,7 @@ public class LoginResource {
     @POST
     @Path("/{login}/{password}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response login(@PathParam("login") String login, @PathParam("password") String password) {
+    public Response login(@PathParam("login") String login, @PathParam("password") String password) throws Exception {
         UserDAO userDAO = new UserDAO();
         User user = userDAO.getUser(login, password);
         if (user == null) {

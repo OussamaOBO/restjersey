@@ -26,7 +26,7 @@ public class Main {
 
     private static UserDAO udao = new UserDAO();
 
-    public static void main(String[] args) throws MalformedURLException, IOException, ClassNotFoundException {
+    public static void main(String[] args) throws MalformedURLException, IOException, ClassNotFoundException, Exception {
         long millis = System.currentTimeMillis();
 
 

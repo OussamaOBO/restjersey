@@ -1,6 +1,8 @@
 package controller.resources;
 
 import com.google.gson.Gson;
+import controller.services.IService;
+import controller.services.UserService;
 import java.util.List;
 import javax.ws.rs.Consumes;
 
@@ -28,11 +30,8 @@ public class UserResource {
     @Path("/getUsers")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsers() {
-        UserDAO userDAO = new UserDAO();
-        List<User> list = userDAO.listAll();
-        if (list.size() == 0) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
+        IService service = new UserService();
+        List<User> list = (List<User>) service.listAll().getEntity();
         return Response.ok(new Gson().toJson(list), MediaType.APPLICATION_JSON).build();
     }
 
@@ -40,12 +39,14 @@ public class UserResource {
     @Path("/getUser/{login}")
     @Produces(MediaType.APPLICATION_JSON)    
     public Response getUser(@PathParam("login") String login) {
-        UserDAO userDAO = new UserDAO();
-        User user = userDAO.getUser(login);
-        if (user == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }      
-        return Response.ok(new Gson().toJson(user), MediaType.APPLICATION_JSON).build();
+        IService service = new UserService();
+        Response response = service.get(login);
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            return Response.ok(new Gson().toJson(response.getEntity()), MediaType.APPLICATION_JSON).build();
+        }
+        else {
+            return response;
+        }
     }
 
     @POST
@@ -53,15 +54,8 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addUser(String userJSON) {
         User user = new Gson().fromJson(userJSON, User.class);
-        if (user.getLogin() == null || user.getPassword() == null || user.getLogin().equals("") || user.getPassword().equals("")) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-        UserDAO userDAO = new UserDAO();
-        if (userDAO.getUser(user.getLogin()) != null) {
-            return Response.status(Response.Status.CONFLICT).build();
-        }
-        userDAO.add(user);
-        return Response.status(Response.Status.CREATED).build();
+        IService service = new UserService();
+        return service.add(user);
     }
    
     @PUT
@@ -69,30 +63,16 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateUser(String userJSON) {
         User user = new Gson().fromJson(userJSON, User.class);
-        if (user.getLogin() == null || user.getPassword() == null || user.getLogin().equals("") || user.getPassword().equals("")) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-        UserDAO userDAO = new UserDAO();
-        if (userDAO.getUser(user.getLogin()) == null) {
-            return Response.status(Response.Status.CONFLICT).build();
-        }
-        System.out.println("Session state -> "+userDAO.getSession().isOpen());
-        userDAO.update(user);        
-        return Response.status(Response.Status.ACCEPTED).build();
+        IService service = new UserService();
+        return service.update(user);
     }
 
     @DELETE
     @Path("/deleteUser/{login}")
     public Response deleteUser(@PathParam("login") String login) {       
-        if (login == null || login.equals("")) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-        UserDAO userDAO = new UserDAO();
-        User user = userDAO.getUser(login);
-        if (user == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        userDAO.delete(user);
-        return Response.status(Response.Status.OK).build();
+        User user = new User();
+        user.setLogin(login);
+        IService service = new UserService();
+        return service.delete(user);
     }
 }
