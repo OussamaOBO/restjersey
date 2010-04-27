@@ -3,8 +3,7 @@ package model.dao;
 import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.HibernateException;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
+
 
 /**
  *
@@ -18,94 +17,93 @@ public abstract class GenericDAO<T> extends DAOFactory {
         this.classe = classe;
     }
 
-    public void add(T t) {
+    public void add(T t) throws Exception {
         try {
             getSession().save(t);
             beginTransaction();
             commit();
         } catch (Exception e) {
             rollback();
-            throw new WebApplicationException(e, 500);
+            throw e;
         } finally {
             close();
         }        
     }
 
-    public void delete(T t) {
+    public void delete(T t) throws Exception {
         try {
             getSession().delete(t);
             beginTransaction();
             commit();
         } catch (Exception e) {
             rollback();
-            throw new WebApplicationException(e, 500);
+            throw e;
         } finally {
             close();
         }        
     }
 
-    public void update(T t) {
+    public void update(T t) throws Exception {
         try {
             getSession().update(t);
             beginTransaction();
             commit();
         } catch (Exception e) {
             rollback();
-            throw new WebApplicationException(e, 500);
+            throw e;
         } finally {
             close();
         }       
     }
 
-    public List<T> listAll() {
+    public List<T> listAll() throws Exception {
         try {
             return getSession().createCriteria(classe).list();
         } catch (Exception e) {
-            throw new WebApplicationException(e, 500);
+            throw e;
         } finally {
             close();
         }
     }
 
-    public List<T> list(int begin, int length) {
+    public List<T> list(int begin, int length) throws Exception {
         try {
             return getSession().createCriteria(classe).setMaxResults(length).setFirstResult(begin).list();
         } catch (Exception e) {
-            throw new WebApplicationException(e, 500);
+            throw e;
         } finally {
             close();
         }
     }
 
-    public Response deleteAll() {
+    public void deleteAll() throws Exception {
         try {
             String hql = "delete from " + classe.getSimpleName();
             Query q = getSession().createQuery(hql);
-            q.executeUpdate();
-            return Response.ok().build();
+            q.executeUpdate();            
         } catch (Exception e) {
             rollback();
-            throw new WebApplicationException(e, 500);
+            throw e;
         } finally {
             close();
         }
     }
 
-    public T getById(String id) {        
+    public T getById(String id) throws Exception {
         try {
             return (T) getSession().get(classe, id);
         } catch (Exception e) {
-            throw new WebApplicationException(e, 500);
+            throw e;
         } finally {
             close();
         }
     }
 
-    public T getById(Long id) {        
+    public T getById(Long id) throws Exception {
         try {
             return (T) getSession().get(classe, id);
         } catch (Exception e) {
-            throw new WebApplicationException(e, 500);
+            throw e;
         } finally {
             close();
         }
@@ -116,7 +114,7 @@ public abstract class GenericDAO<T> extends DAOFactory {
         try {
             super.close();
         } catch (HibernateException he) {
-            throw new WebApplicationException(he, 500);
+            throw he;
         }
     }
 
@@ -126,7 +124,7 @@ public abstract class GenericDAO<T> extends DAOFactory {
             try {
                 super.rollback();
             } catch (HibernateException he) {
-                throw new WebApplicationException(he, 500);
+                throw he;
             }
         }
     }
