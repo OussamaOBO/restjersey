@@ -15,7 +15,7 @@ public class UserDAO extends GenericDAO<User> {
 
     @Override
     public boolean exists(User user) throws Exception {
-        return getUser(user.getLogin()) != null;
+        return getByUnique(user.getLogin()) != null;
     }
 
     public User getUser(String login, String password) throws Exception {
@@ -32,7 +32,18 @@ public class UserDAO extends GenericDAO<User> {
         }
     }
 
-    public User getUser(String login) throws Exception {
-        return getById(login);
-    }    
+    @Override
+    public User getByUnique(Object o) throws Exception {        
+        try {
+            String login = (String) o;
+            String hql = "select u from User as u where u.login = :login";
+            Query q = getSession().createQuery(hql);
+            q.setParameter("login", login);
+            return (User) q.uniqueResult();
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            close();
+        }
+    }
 }

@@ -25,6 +25,8 @@ public class UserService implements IService<User> {
             else {
                 return Response.status(Response.Status.CONFLICT).build();
             }
+        } catch (WebApplicationException e) {
+            throw e;
         } catch (Exception e) {
             throw new WebApplicationException(e, 500);
         }
@@ -33,13 +35,11 @@ public class UserService implements IService<User> {
     public Response update(User user) {
         validateRequest(user);
         try {
-            if (userDAO.exists(user)) {
-                userDAO.update(user);
-                return Response.status(Response.Status.OK).build();
-            }
-            else {
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
+            putId(user);
+            userDAO.update(user);
+            return Response.status(Response.Status.OK).build();            
+        } catch (WebApplicationException e) {
+            throw e;
         } catch (Exception e) {
             throw new WebApplicationException(e, Response.Status.INTERNAL_SERVER_ERROR);
         }
@@ -48,13 +48,11 @@ public class UserService implements IService<User> {
     public Response delete(User user) {
         validateRequest(user);
         try {
-            if (userDAO.exists(user)) {
-                userDAO.delete(user);
-                return Response.status(Response.Status.OK).build();
-            }
-            else {
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
+            putId(user);
+            userDAO.delete(user);
+            return Response.status(Response.Status.OK).build();           
+        } catch (WebApplicationException e) {
+            throw e;
         } catch (Exception e) {
             throw new WebApplicationException(e, Response.Status.INTERNAL_SERVER_ERROR);
         }
@@ -63,13 +61,15 @@ public class UserService implements IService<User> {
     public Response get(String login) {
         validateRequest(login);
         try {            
-            User u = userDAO.getUser(login);
+            User u = userDAO.getByUnique(login);
             if (u != null) {
                 return Response.ok(u).build();
             }
             else {
                 return Response.status(Response.Status.CONFLICT).build();
             }
+        } catch (WebApplicationException e) {
+            throw e;
         } catch (Exception e) {
             throw new WebApplicationException(e, Response.Status.INTERNAL_SERVER_ERROR);
         }
@@ -78,6 +78,8 @@ public class UserService implements IService<User> {
     public Response listAll() {
         try {
             return Response.ok(userDAO.listAll()).build();
+        } catch (WebApplicationException e) {
+            throw e;
         } catch (Exception e) {
             throw new WebApplicationException(e, Response.Status.INTERNAL_SERVER_ERROR);
         }
@@ -86,6 +88,8 @@ public class UserService implements IService<User> {
     public Response list(int begin, int length) {
         try {
             return Response.ok(userDAO.list(begin, length)).build();
+        } catch (WebApplicationException e) {
+            throw e;
         } catch (Exception e) {
             throw new WebApplicationException(e, Response.Status.INTERNAL_SERVER_ERROR);
         }
@@ -105,16 +109,22 @@ public class UserService implements IService<User> {
             }
             userDAO.add(list);
             return Response.status(Response.Status.CREATED).build();
-        } catch(WebApplicationException we) {
-            throw we;
+        } catch(WebApplicationException e) {
+            throw e;
         } catch (Exception e) {
             throw new WebApplicationException(e, Response.Status.INTERNAL_SERVER_ERROR);
         }        
     }
 
+    public Response get(long id) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public static void validateRequest(User user) {
-        if (user.getLogin() == null || user.getLogin().equals("")) {
-            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        if (user.getId() == null || user.getId() == 0) {
+            if (user.getLogin() == null || user.getLogin().equals("")) {
+                throw new WebApplicationException(Response.Status.BAD_REQUEST);
+            }
         }
     }
 
@@ -124,7 +134,14 @@ public class UserService implements IService<User> {
         }
     }
 
-    public Response get(long id) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    private void putId(User user) throws Exception {
+        if (user.getId() == null || user.getId() == 0) {
+            user = userDAO.getByUnique(user.getLogin());
+            if (user == null) {
+                throw new WebApplicationException(Response.Status.NOT_FOUND);
+            }
+        }
     }
+
+    
 }

@@ -20,7 +20,7 @@ public class HibernateUtil {
             Configuration conf = new AnnotationConfiguration();
             conf.configure("hibernate.cfg.xml");
             factory = conf.buildSessionFactory();
-            geraTabelas(conf);
+            generateTables(conf);
         } catch (Throwable ex) {
             System.err.println("Initial SessionFactory creation failed." + ex);
             throw new ExceptionInInitializerError(ex);
@@ -43,7 +43,7 @@ public class HibernateUtil {
         return factory.openSession();
     }
 
-    public static void geraTabelas(Configuration conf) {
+    public static void generateTables(Configuration conf) {
         SchemaUpdate su = new SchemaUpdate(conf);
         su.execute(true, true);
 

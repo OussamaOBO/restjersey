@@ -1,6 +1,7 @@
 package model.vo;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,19 +18,18 @@ import javax.persistence.Version;
 public class User implements Serializable {
     @Version
     private Integer version;
-/*
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-*/
-    @Id
-    @Column(length=30)
+
+    @Column(length=30, nullable=false)
     private String login;
 
     @Column(length=32, nullable=false)
     private String password;
 
-    @Column(length=1)
+    @Column(length=1, nullable=false)
     private Integer role = 0;
 
     @Override
@@ -41,7 +41,16 @@ public class User implements Serializable {
             return false;
         }
         final User other = (User) obj;
+        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
+            return false;
+        }
         if ((this.login == null) ? (other.login != null) : !this.login.equals(other.login)) {
+            return false;
+        }
+        if ((this.password == null) ? (other.password != null) : !this.password.equals(other.password)) {
+            return false;
+        }
+        if (this.role != other.role && (this.role == null || !this.role.equals(other.role))) {
             return false;
         }
         return true;
@@ -49,14 +58,25 @@ public class User implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 59 * hash + (this.login != null ? this.login.hashCode() : 0);
-        hash = 59 * hash + (this.password != null ? this.password.hashCode() : 0);
+        int hash = 7;
+        hash = 79 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 79 * hash + (this.login != null ? this.login.hashCode() : 0);
+        hash = 79 * hash + (this.password != null ? this.password.hashCode() : 0);
+        hash = 79 * hash + (this.role != null ? this.role.hashCode() : 0);
         return hash;
     }
 
     public Integer getVersion() {
         return version;
+    }
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setVersion(Integer version) {
@@ -86,4 +106,5 @@ public class User implements Serializable {
     public void setRole(Integer role) {
         this.role = role;
     }
+
 }

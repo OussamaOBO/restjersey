@@ -13,10 +13,6 @@ public interface IService<T> {
     Response update(T t);
     Response delete(T t);
     Response get(long id);
-    Response get(String id);
     Response listAll();
-    Response list(int begin, int length);    
-    Response deleteAll(T t);
-    Response add(List<T> list);
-    
+    Response list(int begin, int length);      
 }

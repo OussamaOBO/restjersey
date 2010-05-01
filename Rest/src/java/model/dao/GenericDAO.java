@@ -18,6 +18,7 @@ public abstract class GenericDAO<T> extends DAOFactory {
     }
 
     public abstract boolean exists(T t) throws Exception;
+    public abstract T getByUnique(Object o) throws Exception;
 
     public void add(T t) throws Exception {
         try {
@@ -101,16 +102,6 @@ public abstract class GenericDAO<T> extends DAOFactory {
             q.executeUpdate();            
         } catch (Exception e) {
             rollback();
-            throw e;
-        } finally {
-            close();
-        }
-    }
-
-    public T getById(String id) throws Exception {
-        try {
-            return (T) getSession().get(classe, id);
-        } catch (Exception e) {
             throw e;
         } finally {
             close();

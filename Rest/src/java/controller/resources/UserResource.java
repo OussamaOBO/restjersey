@@ -27,7 +27,7 @@ public class UserResource {
 
 
     @GET
-    @Path("/getUsers")
+    @Path("/all")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsers() {
         IService service = new UserService();
@@ -36,11 +36,11 @@ public class UserResource {
     }
 
     @GET
-    @Path("/getUser/{login}")
+    @Path("/{login}")
     @Produces(MediaType.APPLICATION_JSON)    
     public Response getUser(@PathParam("login") String login) {
-        IService service = new UserService();
-        Response response = service.get(login);
+        UserService userService = new UserService();
+        Response response = userService.get(login);
         if (response.getStatus() == Response.Status.OK.getStatusCode()) {
             return Response.ok(new Gson().toJson(response.getEntity()), MediaType.APPLICATION_JSON).build();
         }
@@ -49,8 +49,7 @@ public class UserResource {
         }
     }
 
-    @POST
-    @Path("/addUser")
+    @POST    
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addUser(String userJSON) {
         User user = new Gson().fromJson(userJSON, User.class);
@@ -58,8 +57,7 @@ public class UserResource {
         return service.add(user);
     }
    
-    @PUT
-    @Path("/updateUser")
+    @PUT    
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateUser(String userJSON) {
         User user = new Gson().fromJson(userJSON, User.class);
