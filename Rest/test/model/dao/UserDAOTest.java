@@ -2,7 +2,6 @@ package model.dao;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.WebApplicationException;
 import model.vo.User;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -54,7 +53,7 @@ public class UserDAOTest {
     public void testAddUser() throws Exception {
         System.out.println("testAddUser");
         userDAO.add(user1);     
-        User result = userDAO.getUser(user1.getLogin());
+        User result = userDAO.getByUnique(user1.getLogin());
         userDAO.delete(user1);
 
         assertEquals(user1, result);
@@ -65,27 +64,17 @@ public class UserDAOTest {
         System.out.println("testDeleteUser");
         userDAO.add(user1);
         userDAO.delete(user1);
-        assertEquals(null, userDAO.getUser(user1.getLogin()));
+        assertEquals(null, userDAO.getByUnique(user1.getLogin()));
     }
 
     @Test
-    public void testUpdateUserPassword() throws Exception {
-        System.out.println("testUpdateUserPassword");
-        userDAO.add(user1);
-        user1.setPassword("newPassword");
-        userDAO.update(user1);
-        User result = userDAO.getUser(user1.getLogin());
-        userDAO.delete(user1);
-        assertEquals(user1, result);
-    }
-
-    @Test(expected = Exception.class)
-    public void testUpdateUserLogin() throws Exception {
-        System.out.println("testUpdateUserLogin");
+    public void testUpdateUser() throws Exception {
+        System.out.println("testUpdateUser");
         userDAO.add(user1);
         user1.setLogin("newLogin");
+        user1.setPassword("newPassword");
         userDAO.update(user1);
-        User result = userDAO.getUser(user1.getLogin());
+        User result = userDAO.getByUnique(user1.getLogin());
         userDAO.delete(user1);
         assertEquals(user1, result);
     }
@@ -109,7 +98,7 @@ public class UserDAOTest {
     public void testGetUser_String() throws Exception {
         System.out.println("testGetUser_String");
         userDAO.add(user1);       
-        User result = userDAO.getUser(user1.getLogin());
+        User result = userDAO.getByUnique(user1.getLogin());
         userDAO.delete(user1);
         assertEquals(user1, result);
     }
@@ -141,7 +130,7 @@ public class UserDAOTest {
 
         userDAO.deleteAll();
 
-        User result = userDAO.getUser(user1.getLogin());
+        User result = userDAO.getByUnique(user1.getLogin());
         assertEquals(result, null);
     }
 

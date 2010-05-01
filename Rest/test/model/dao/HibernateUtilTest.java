@@ -50,10 +50,10 @@ public class HibernateUtilTest {
      */
     @Test
     public void testGeraTabelas() {
-        System.out.println("geraTabelas");
+        System.out.println("generateTables");
         Configuration conf = new AnnotationConfiguration();
         conf.configure("hibernate.cfg.xml");
-        HibernateUtil.geraTabelas(conf);        
+        HibernateUtil.generateTables(conf);
     }
 
 }
