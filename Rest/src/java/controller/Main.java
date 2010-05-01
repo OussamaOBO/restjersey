@@ -43,7 +43,7 @@ public class Main {
       
 
         
-        User result = udao.getUser(user.getLogin());
+        User result = udao.getByUnique(user.getLogin());
         System.out.println(result);
         udao.delete(result);
 
