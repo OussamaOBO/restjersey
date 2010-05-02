@@ -13,6 +13,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import model.dao.UserDAO;
@@ -52,25 +53,39 @@ public class UserResource {
     @POST    
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addUser(String userJSON) {
+        System.out.println("JSONNNN:" +userJSON);
         User user = new Gson().fromJson(userJSON, User.class);
-        IService service = new UserService();
+        if (user == null) {
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }  
+        if (user.getId() == null) {
+            user.setId(0L);
+        }
+        UserService service = new UserService();
         return service.add(user);
     }
    
     @PUT    
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateUser(String userJSON) {
+        System.out.println("JSONNNN:" +userJSON);
         User user = new Gson().fromJson(userJSON, User.class);
-        IService service = new UserService();
+        if (user == null) {
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
+        if (user.getId() == null) {
+            user.setId(0L);
+        }
+        UserService service = new UserService();
         return service.update(user);
     }
 
     @DELETE
-    @Path("/deleteUser/{login}")
+    @Path("/{login}")
     public Response deleteUser(@PathParam("login") String login) {       
         User user = new User();
-        user.setLogin(login);
-        IService service = new UserService();
+        user.setLogin("teste");
+        UserService service = new UserService();
         return service.delete(user);
     }
 }

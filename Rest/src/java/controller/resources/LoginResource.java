@@ -1,6 +1,7 @@
 package controller.resources;
 
 import com.google.gson.Gson;
+import controller.services.UserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
@@ -26,10 +27,10 @@ public class LoginResource {
     @Path("/{login}/{password}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@PathParam("login") String login, @PathParam("password") String password) throws Exception {
-        UserDAO userDAO = new UserDAO();
-        User user = userDAO.getUser(login, password);
-        if (user == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        UserService userService = new UserService();
+        Response response = userService.get(login, password);
+        if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
+            return response;
         }
 
         /*

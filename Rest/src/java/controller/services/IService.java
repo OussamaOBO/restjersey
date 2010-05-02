@@ -14,5 +14,6 @@ public interface IService<T> {
     Response delete(T t);
     Response get(long id);
     Response listAll();
-    Response list(int begin, int length);      
+    Response list(int begin, int length);
+    void validateRequest(T t);
 }

@@ -23,7 +23,7 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(length=30, nullable=false)
+    @Column(length=30, nullable=false, unique=true)
     private String login;
 
     @Column(length=32, nullable=false)

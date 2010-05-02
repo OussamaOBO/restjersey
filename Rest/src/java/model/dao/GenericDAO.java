@@ -1,8 +1,10 @@
 package model.dao;
 
 import java.util.List;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.HibernateException;
+import org.hibernate.criterion.Criterion;
 
 
 /**
@@ -18,7 +20,8 @@ public abstract class GenericDAO<T> extends DAOFactory {
     }
 
     public abstract boolean exists(T t) throws Exception;
-    public abstract T getByUnique(Object o) throws Exception;
+    public abstract T getByUnique(T t) throws Exception;
+   
 
     public void add(T t) throws Exception {
         try {
@@ -57,6 +60,35 @@ public abstract class GenericDAO<T> extends DAOFactory {
         } finally {
             close();
         }       
+    }
+
+    public T getById(Long id) throws Exception {
+        try {
+            return (T) getSession().get(classe, id);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            close();
+        }
+    }
+
+    public List<T> findByCriteria(CriterionConfiguration criterionConfiguration) throws Exception {
+        return findByCriteria(criterionConfiguration.getListCriterion());
+    }
+
+    public List<T> findByCriteria(List<Criterion> list) throws Exception {
+        try {
+            Criteria criteria = getSession().createCriteria(classe);
+            for (int i = 0; i < list.size(); i++) {
+                criteria.add(list.get(i));
+            }
+            return criteria.list();
+        } catch (Exception e) {
+            throw e;
+        }
+        finally {
+            close();
+        }
     }
 
     public List<T> listAll() throws Exception {
@@ -102,16 +134,6 @@ public abstract class GenericDAO<T> extends DAOFactory {
             q.executeUpdate();            
         } catch (Exception e) {
             rollback();
-            throw e;
-        } finally {
-            close();
-        }
-    }
-
-    public T getById(Long id) throws Exception {
-        try {
-            return (T) getSession().get(classe, id);
-        } catch (Exception e) {
             throw e;
         } finally {
             close();
