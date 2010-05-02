@@ -3,6 +3,8 @@ package model.dao;
 import java.util.ArrayList;
 import java.util.List;
 import model.vo.User;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -51,7 +53,7 @@ public class UserDAOTest {
     public void testAddUser() throws Exception {
         System.out.println("testAddUser");
         userDAO.add(user1);     
-        User result = userDAO.getByUnique(user1.getLogin());
+        User result = userDAO.getByUnique(user1);
         userDAO.delete(user1);
 
         assertEquals(user1, result);
@@ -62,7 +64,7 @@ public class UserDAOTest {
         System.out.println("testDeleteUser");
         userDAO.add(user1);
         userDAO.delete(user1);
-        assertEquals(null, userDAO.getByUnique(user1.getLogin()));
+        assertEquals(null, userDAO.getByUnique(user1));
     }
 
     @Test
@@ -72,7 +74,7 @@ public class UserDAOTest {
         user1.setLogin("newLogin");
         user1.setPassword("newPassword");
         userDAO.update(user1);
-        User result = userDAO.getByUnique(user1.getLogin());
+        User result = userDAO.getByUnique(user1);
         userDAO.delete(user1);
         assertEquals(user1, result);
     }
@@ -83,10 +85,17 @@ public class UserDAOTest {
     @Test
     public void testGetUser_String_String() throws Exception {
         System.out.println("testGetUser_String_String");
-        userDAO.add(user1);        
-        User result = userDAO.getUser(user1.getLogin(), user1.getPassword());
-        userDAO.delete(user1);
+        userDAO.add(user1);
+        userDAO.add(user2);
+        List<Criterion> list = new ArrayList<Criterion>();
+        Criterion c = Restrictions.eq("login", user1.getLogin());
+        list.add(c);
+        c = Restrictions.eq("password", user1.getPassword());
+        list.add(c);
+        User result = userDAO.findByCriteria(list).get(0);
         assertEquals(user1, result);
+        userDAO.delete(user1);
+        userDAO.delete(user2);
     }
 
     /**
@@ -96,7 +105,7 @@ public class UserDAOTest {
     public void testGetUser_String() throws Exception {
         System.out.println("testGetUser_String");
         userDAO.add(user1);       
-        User result = userDAO.getByUnique(user1.getLogin());
+        User result = userDAO.getByUnique(user1);
         userDAO.delete(user1);
         assertEquals(user1, result);
     }
@@ -128,7 +137,7 @@ public class UserDAOTest {
 
         userDAO.deleteAll();
 
-        User result = userDAO.getByUnique(user1.getLogin());
+        User result = userDAO.getByUnique(user1);
         assertEquals(result, null);
     }
 
