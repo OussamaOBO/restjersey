@@ -14,10 +14,10 @@ import model.vo.User;
 public class Main {
     private static final String BASE_URI = "http://localhost:8080/Rest";
    
-    private static String addUser = "/resources/user/addUser";
-    private static String putUser = "/resources/user/updateUser";
-    private static String getUser = "/resources/user/getUser/%s";
-    private static String deleteUser = "/resources/user/deleteUser/%s";
+    private static String addUser = "/resources/user/";
+    private static String putUser = "/resources/user/";
+    private static String getUser = "/resources/user/%s";
+    private static String deleteUser = "/resources/user/%s";
 
 
 

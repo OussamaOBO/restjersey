@@ -12,6 +12,8 @@ public class User implements Serializable {
   
     private Integer version;
 
+    private Long id;
+
     private String login;
 
     private String password;
@@ -72,5 +74,13 @@ public class User implements Serializable {
 
     public void setRole(Integer role) {
         this.role = role;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
