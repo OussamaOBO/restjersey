@@ -16,8 +16,8 @@ import static org.junit.Assert.*;
  */
 public class UserDAOTest {
 
-    private User user1;
-    private User user2;
+    private User user1 = new User();
+    private User user2 = new User();
     private UserDAO userDAO = new UserDAO();
 
     public UserDAOTest() {
@@ -35,11 +35,9 @@ public class UserDAOTest {
     @Before
     public void setUp() throws Exception {
         userDAO.deleteAll();
-
-        user1 = new User();
+       
         user1.setLogin("teste1");
-        user1.setPassword("teste1");
-        user2 = new User();
+        user1.setPassword("teste1");     
         user2.setLogin("teste2");
         user2.setPassword("teste2");
     }
